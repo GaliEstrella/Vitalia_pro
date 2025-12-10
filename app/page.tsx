@@ -60,6 +60,7 @@ export default function VitalIAFinal() {
     addLog("Inicializando VitalIA Kernel v7.0...");
     async function boot() {
       try {
+        // Intenta cargar desde public
         const m = await tf.loadLayersModel('/modelo_ia/model.json');
         setModel(m);
         setSystemState('ready');
@@ -245,11 +246,12 @@ export default function VitalIAFinal() {
                 </div>
 
                 <h3 style={{display:'flex', gap:'10px', borderBottom:'1px solid #334155', paddingBottom:'15px', margin:'20px 0'}}><Thermometer color="#3b82f6"/> Biomarcadores</h3>
+                {/* --- AQUÍ ESTABA EL ERROR: AGREGAMOS TIPO (v:any) --- */}
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'15px'}}>
-                   <StrictInput label="Edad" val={inputs.edad} setVal={v=>setInputs({...inputs, edad:v})} unit="Años"/>
-                   <StrictInput label="Glucosa" val={inputs.glucosa} setVal={v=>setInputs({...inputs, glucosa:v})} unit="mg/dL"/>
-                   <StrictInput label="IMC" val={inputs.imc} setVal={v=>setInputs({...inputs, imc:v})} unit="kg/m²"/>
-                   <StrictInput label="Presión" val={inputs.presion} setVal={v=>setInputs({...inputs, presion:v})} unit="mmHg"/>
+                   <StrictInput label="Edad" val={inputs.edad} setVal={(v:any)=>setInputs({...inputs, edad:v})} unit="Años"/>
+                   <StrictInput label="Glucosa" val={inputs.glucosa} setVal={(v:any)=>setInputs({...inputs, glucosa:v})} unit="mg/dL"/>
+                   <StrictInput label="IMC" val={inputs.imc} setVal={(v:any)=>setInputs({...inputs, imc:v})} unit="kg/m²"/>
+                   <StrictInput label="Presión" val={inputs.presion} setVal={(v:any)=>setInputs({...inputs, presion:v})} unit="mmHg"/>
                 </div>
 
                 <div style={{marginTop:'25px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
@@ -307,12 +309,11 @@ export default function VitalIAFinal() {
           </>
         )}
 
-        {/* REPORTS VIEW (AQUÍ ESTÁN LAS GRÁFICAS NUEVAS) */}
+        {/* REPORTS VIEW */}
         {activeTab === 'reports' && (
           <>
             <h1 style={{fontSize:'1.8rem', fontWeight:'bold', marginBottom:'20px'}}>Inteligencia Hospitalaria (BI)</h1>
             
-            {/* KPI CARDS */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '30px' }}>
               <KPICard title="Total Pacientes" value={db.length} icon={<Users size={20} color="#3b82f6"/>} />
               <KPICard title="Edad Promedio" value={`${avgAge} Años`} icon={<User size={20} color="#10b981"/>} />
@@ -321,8 +322,6 @@ export default function VitalIAFinal() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-              
-              {/* Gráfica 1: Comorbilidades (Nueva) */}
               <div style={cardStyle}>
                 <h3>Patologías Frecuentes</h3>
                 <div style={{height:'250px'}}><ResponsiveContainer><BarChart data={getComorbidityData()} layout="vertical">
@@ -335,7 +334,6 @@ export default function VitalIAFinal() {
                 </BarChart></ResponsiveContainer></div>
               </div>
 
-              {/* Gráfica 2: Distribución IMC (Nueva) */}
               <div style={cardStyle}>
                 <h3>Clasificación Nutricional (IMC)</h3>
                 <div style={{height:'250px'}}><ResponsiveContainer><PieChart>
@@ -346,7 +344,6 @@ export default function VitalIAFinal() {
                 </PieChart></ResponsiveContainer></div>
               </div>
 
-              {/* Gráfica 3: Género */}
               <div style={cardStyle}>
                 <h3>Demografía por Género</h3>
                 <div style={{height:'250px'}}><ResponsiveContainer><PieChart>
@@ -357,7 +354,6 @@ export default function VitalIAFinal() {
                 </PieChart></ResponsiveContainer></div>
               </div>
 
-               {/* Gráfica 4: Tendencia (Simulada) */}
                <div style={cardStyle}>
                 <h3>Tendencia de Pacientes (Semanal)</h3>
                 <div style={{height:'250px'}}><ResponsiveContainer><AreaChart data={[
@@ -369,7 +365,6 @@ export default function VitalIAFinal() {
                    <Area type="monotone" dataKey="v" stroke="#10b981" fill="#10b981" fillOpacity={0.2} />
                 </AreaChart></ResponsiveContainer></div>
               </div>
-
             </div>
           </>
         )}
